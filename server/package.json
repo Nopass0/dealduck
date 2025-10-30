@@ -1,20 +1,35 @@
 {
   "name": "server",
-  "module": "index.ts",
+  "module": "src/app.ts",
   "type": "module",
   "private": true,
-  "devDependencies": {
-    "@types/bun": "latest"
+  "scripts": {
+    "dev": "bun --watch src/app.ts",
+    "start": "bun src/app.ts",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
     "elysia": "^1.4.13",
-    "prisma": "^6.18.0",
+    "@prisma/client": "^6.18.0",
     "steam-totp": "^2.1.2",
     "steam-tradeoffer-manager": "^2.12.2",
     "steam-user": "^5.2.3",
-    "steamcommunity": "^3.49.0"
+    "steamcommunity": "^3.49.0",
+    "@elysiajs/jwt": "^1.0.0",
+    "@elysiajs/cors": "^1.0.0",
+    "@elysiajs/cookie": "^0.8.0",
+    "openid": "^2.0.12",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/openid": "^2.0.5",
+    "prisma": "^6.18.0"
   }
 }
