@@ -1,0 +1,20 @@
+{
+  "name": "server",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "elysia": "^1.4.13",
+    "prisma": "^6.18.0",
+    "steam-totp": "^2.1.2",
+    "steam-tradeoffer-manager": "^2.12.2",
+    "steam-user": "^5.2.3",
+    "steamcommunity": "^3.49.0"
+  }
+}
