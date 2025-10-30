@@ -1,0 +1,188 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String           @id @default(cuid())
+  steamId         String           @unique
+  username        String
+  avatar          String
+  profileUrl      String
+  steamGuardCode  String?          // Steam Guard shared secret for auto-confirmation
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  sessions        Session[]
+  subscriptions   Subscription[]
+  inventory       InventoryItem[]
+  strategies      Strategy[]
+  transactions    Transaction[]
+
+  @@index([steamId])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+model Subscription {
+  id            String   @id @default(cuid())
+  userId        String
+  boostyId      String?  // ID подписки в Boosty
+  plan          String   // Тарифный план
+  status        String   // active, expired, cancelled
+  startDate     DateTime
+  endDate       DateTime?
+  autoRenew     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Game {
+  id          String          @id @default(cuid())
+  steamAppId  String          @unique
+  name        String
+  iconUrl     String?
+  createdAt   DateTime        @default(now())
+
+  items       MarketItem[]
+  strategies  Strategy[]
+
+  @@index([steamAppId])
+}
+
+model MarketItem {
+  id              String            @id @default(cuid())
+  gameId          String
+  marketHashName  String            @unique // Уникальное имя на торговой площадке
+  name            String
+  iconUrl         String?
+  rarity          String?
+  type            String?
+  createdAt       DateTime          @default(now())
+
+  game            Game              @relation(fields: [gameId], references: [id])
+  priceHistory    PriceHistory[]
+  inventory       InventoryItem[]
+  strategyItems   StrategyItem[]
+
+  @@index([gameId])
+  @@index([marketHashName])
+}
+
+model PriceHistory {
+  id           String     @id @default(cuid())
+  itemId       String
+  price        Float
+  volume       Int        @default(0) // Объем продаж
+  timestamp    DateTime   @default(now())
+
+  item         MarketItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@index([itemId, timestamp])
+}
+
+model InventoryItem {
+  id          String     @id @default(cuid())
+  userId      String
+  itemId      String
+  assetId     String     @unique // ID предмета в инвентаре Steam
+  acquiredAt  DateTime   @default(now())
+
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item        MarketItem @relation(fields: [itemId], references: [id])
+
+  @@index([userId])
+  @@index([itemId])
+}
+
+model Strategy {
+  id          String         @id @default(cuid())
+  userId      String
+  gameId      String
+  name        String
+  description String?
+  isActive    Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game        Game           @relation(fields: [gameId], references: [id])
+  items       StrategyItem[]
+  stats       StrategyStats?
+
+  @@index([userId])
+  @@index([gameId])
+  @@index([isActive])
+}
+
+model StrategyItem {
+  id                String   @id @default(cuid())
+  strategyId        String
+  itemId            String
+  action            String   // buy, sell, both
+  buyCondition      String?  // JSON условия покупки
+  sellCondition     String?  // JSON условия продажи
+  buyDelay          Int      @default(0) // Задержка перед покупкой в секундах
+  sellDelay         Int      @default(0) // Задержка перед продажей в секундах
+  maxBuyPrice       Float?
+  minSellPrice      Float?
+  quantity          Int      @default(1)
+
+  strategy          Strategy   @relation(fields: [strategyId], references: [id], onDelete: Cascade)
+  item              MarketItem @relation(fields: [itemId], references: [id])
+
+  @@index([strategyId])
+  @@index([itemId])
+}
+
+model StrategyStats {
+  id              String   @id @default(cuid())
+  strategyId      String   @unique
+  totalProfit     Float    @default(0)
+  totalBought     Int      @default(0)
+  totalSold       Int      @default(0)
+  successRate     Float    @default(0)
+  lastExecuted    DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  strategy        Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
+}
+
+model Transaction {
+  id              String   @id @default(cuid())
+  userId          String
+  strategyId      String?
+  itemId          String
+  type            String   // buy, sell
+  price           Float
+  quantity        Int      @default(1)
+  status          String   // pending, completed, failed
+  executedAt      DateTime @default(now())
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([strategyId])
+  @@index([type])
+  @@index([executedAt])
+}

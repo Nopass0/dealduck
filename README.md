@@ -1,276 +1,122 @@
-# DealDuck - Steam Authentication Platform
+# DealDuck - Automated Steam Market Trading Platform
 
-Полнофункциональная система авторизации через Steam с использованием Elysia.js (backend) и Next.js (frontend).
+Полнофункциональная платформа автоматизированной торговли на Steam Market с использованием Elysia.js (backend) и Next.js (frontend).
 
 ## Технологии
 
 ### Backend
 - **Elysia.js** - быстрый TypeScript-фреймворк для Bun
+- **PostgreSQL + Prisma** - база данных и ORM
 - **Steam OpenID** - авторизация через Steam
+- **Steam Web API** - получение данных профиля и инвентаря
 - **JWT** - токены для сессий
-- **TypeScript** - типизация
+- **TypeScript** - полная типизация
 
 ### Frontend
-- **Next.js 14** - React фреймворк
+- **Next.js 14 (App Router)** - React фреймворк
+- **shadcn/ui** - современные UI компоненты на базе Radix UI
 - **TypeScript** - типизация
-- **Zustand** - управление состоянием
+- **Zustand** - управление состоянием с persist
 - **Zod** - валидация данных
+- **Framer Motion** - анимации
+- **Recharts** - графики и визуализация данных
 - **Lucide React** - иконки
 - **Tailwind CSS** - стилизация
 
-## Структура проекта
+## Основные возможности
 
-```
-dealduck/
-├── server/          # Backend (Elysia.js)
-│   ├── src/
-│   │   ├── app.ts          # Главный файл приложения
-│   │   ├── types.ts        # TypeScript типы
-│   │   ├── store.ts        # In-memory хранилище
-│   │   ├── steam.ts        # Steam API утилиты
-│   │   ├── config.ts       # Конфигурация
-│   │   └── utils.ts        # Вспомогательные функции
-│   └── package.json
-│
-└── client/          # Frontend (Next.js)
-    ├── src/
-    │   ├── app/            # Next.js страницы (App Router)
-    │   ├── components/     # React компоненты
-    │   ├── hooks/          # API хуки
-    │   ├── store/          # Zustand stores
-    │   ├── types/          # TypeScript типы + Zod схемы
-    │   └── lib/            # Утилиты и конфигурация
-    └── package.json
-```
+### Авторизация
+- ✅ Steam OpenID авторизация
+- ✅ JWT токены для сессий
+- ✅ Автоматическое обновление данных профиля
 
-## Установка и настройка
+### Управление подпиской
+- ✅ Интеграция с Boosty API
+- ✅ История подписок по датам
+- ✅ Автоматическое продление
+- ✅ Разные тарифные планы (Basic, Premium, Enterprise)
 
-### Получение Steam API Key
+### Инвентарь
+- ✅ Просмотр всех предметов из Steam
+- ✅ Актуальные цены с торговой площадки
+- ✅ Графики истории цен (30 дней)
+- ✅ Процент изменения цены
+- ✅ Синхронизация с Steam API
 
-1. Перейдите на https://steamcommunity.com/dev/apikey
-2. Войдите через Steam
-3. Заполните форму и получите ваш API ключ
-4. Сохраните ключ для настройки
+### Стратегии торговли
+- ✅ Создание торговых стратегий
+- ✅ Выбор игры (CS2, Dota 2, и др.)
+- ✅ Выбор предметов для торговли
+- ✅ Настройка условий покупки/продажи
+- ✅ Настройка задержек
+- ✅ Установка максимальной цены покупки
+- ✅ Установка минимальной цены продажи
+- ✅ Запуск/остановка стратегий
+- ✅ Редактирование стратегий
+- ✅ Статистика (профит, покупки, продажи, успешность)
+- ✅ История транзакций
 
-### Backend
+### Настройки
+- ✅ Информация об аккаунте
+- ✅ Настройка Steam Guard для автоподтверждения
+- ✅ Управление подпиской
 
-1. Перейдите в папку server:
-```bash
+### UI/UX
+- ✅ Адаптивный дизайн
+- ✅ Dark mode support
+- ✅ Анимации с Framer Motion
+- ✅ Левое меню навигации
+- ✅ Красивые графики и статистика
+
+## Установка
+
+### Требования
+- Bun или Node.js 18+
+- PostgreSQL 14+
+- Steam API Key
+
+### Backend Setup
+\`\`\`bash
 cd server
-```
-
-2. Установите Bun (если не установлен):
-```bash
-curl -fsSL https://bun.sh/install | bash
-```
-
-3. Установите зависимости:
-```bash
-bun install
-```
-
-4. Создайте файл `.env` на основе `.env.example`:
-```bash
-cp .env.example .env
-```
-
-5. Отредактируйте `.env` и добавьте ваш Steam API Key:
-```env
-PORT=3001
-JWT_SECRET=your-secret-key-change-in-production
-STEAM_API_KEY=YOUR_STEAM_API_KEY_HERE
-FRONTEND_URL=http://localhost:3000
-BACKEND_URL=http://localhost:3001
-```
-
-6. Запустите сервер:
-```bash
-bun run dev
-```
-
-Сервер будет доступен на http://localhost:3001
-
-### Frontend
-
-1. Перейдите в папку client:
-```bash
-cd client
-```
-
-2. Установите зависимости:
-```bash
 npm install
-# или
-yarn install
-# или
-pnpm install
-```
-
-3. Создайте файл `.env.local`:
-```bash
-cp .env.example .env.local
-```
-
-4. Запустите приложение:
-```bash
+cp .env.example .env
+# Edit .env with your settings
+npm run db:push
 npm run dev
-# или
-yarn dev
-# или
-pnpm dev
-```
+\`\`\`
 
-Приложение будет доступно на http://localhost:3000
+### Frontend Setup
+\`\`\`bash
+cd client
+npm install
+cp .env.example .env.local
+npm run dev
+\`\`\`
 
 ## API Эндпоинты
 
-### Авторизация
+### Auth
+- GET /api/auth/steam
+- GET /api/auth/steam/callback
+- GET /api/auth/me
+- POST /api/auth/logout
 
-#### `GET /api/auth/steam`
-Получить URL для авторизации через Steam
+### Subscriptions
+- GET /api/subscriptions
+- GET /api/subscriptions/current
+- POST /api/subscriptions/sync
 
-**Response:**
-```json
-{
-  "url": "https://steamcommunity.com/openid/login?..."
-}
-```
+### Inventory
+- GET /api/inventory
+- GET /api/inventory/:itemId/price-history
 
-#### `GET /api/auth/steam/callback`
-Callback эндпоинт для Steam OpenID (автоматически вызывается Steam)
-
-**Query Parameters:**
-- Steam OpenID параметры
-
-**Redirect:**
-- Перенаправляет на frontend с токеном: `http://localhost:3000/auth/callback?token=...`
-
-#### `GET /api/auth/me`
-Получить информацию о текущем пользователе
-
-**Headers:**
-```
-Authorization: Bearer <token>
-```
-
-**Response:**
-```json
-{
-  "user": {
-    "id": "string",
-    "steamId": "string",
-    "username": "string",
-    "avatar": "string",
-    "profileUrl": "string",
-    "createdAt": "date",
-    "updatedAt": "date"
-  }
-}
-```
-
-#### `POST /api/auth/logout`
-Выйти из системы
-
-**Headers:**
-```
-Authorization: Bearer <token>
-```
-
-**Response:**
-```json
-{
-  "success": true
-}
-```
-
-## Frontend компоненты
-
-### `SteamLoginButton`
-Кнопка для входа через Steam с иконкой из Lucide React
-
-### `UserProfile`
-Отображает профиль пользователя с:
-- Аватаром Steam
-- Именем пользователя
-- Ссылкой на профиль Steam
-- Кнопкой выхода
-
-## Hooks
-
-### `useAuth()`
-Хук для работы с API авторизации:
-- `getSteamAuthUrl()` - получить URL для входа
-- `getMe(token)` - получить данные пользователя
-- `logout(token)` - выйти из системы
-
-## Store (Zustand)
-
-### `useAuthStore`
-Глобальное состояние авторизации:
-- `user` - данные пользователя
-- `token` - токен сессии
-- `isAuthenticated` - статус авторизации
-- `setAuth(user, token)` - установить данные авторизации
-- `clearAuth()` - очистить данные
-
-## Валидация (Zod)
-
-Все API ответы валидируются с помощью Zod схем:
-- `UserSchema` - схема пользователя
-- `AuthResponseSchema` - схема ответа авторизации
-- `MeResponseSchema` - схема ответа /me
-
-## Разработка
-
-### Backend
-```bash
-cd server
-bun run dev  # Запуск с hot reload
-```
-
-### Frontend
-```bash
-cd client
-npm run dev  # Запуск с hot reload
-```
-
-## Production
-
-### Backend
-```bash
-cd server
-bun run start
-```
-
-### Frontend
-```bash
-cd client
-npm run build
-npm run start
-```
-
-## Особенности
-
-- ✅ Полная типизация TypeScript
-- ✅ Steam OpenID авторизация
-- ✅ JWT токены для сессий
-- ✅ Валидация данных с Zod
-- ✅ Управление состоянием с Zustand
-- ✅ Responsive дизайн с Tailwind CSS
-- ✅ Иконки Lucide React
-- ✅ In-memory хранилище (легко заменить на БД)
-- ✅ CORS настроен
-- ✅ Dark mode support
-
-## Дальнейшее развитие
-
-- [ ] Подключить PostgreSQL/MongoDB для хранения данных
-- [ ] Добавить middleware для защиты роутов
-- [ ] Реализовать refresh tokens
-- [ ] Добавить rate limiting
-- [ ] Добавить логирование
-- [ ] Unit тесты
-- [ ] Docker контейнеризация
+### Strategies
+- GET /api/strategies
+- POST /api/strategies
+- PUT /api/strategies/:id
+- DELETE /api/strategies/:id
+- POST /api/strategies/:id/toggle
+- GET /api/strategies/:id/transactions
 
 ## Лицензия
 
