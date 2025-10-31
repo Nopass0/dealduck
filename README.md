@@ -75,7 +75,39 @@
 - PostgreSQL 14+
 - Steam API Key
 
-### Backend Setup
+### Быстрый запуск
+
+#### Вариант 1: Использование скрипта запуска (рекомендуется)
+
+**Linux/Mac:**
+\`\`\`bash
+# Установка зависимостей для всех проектов
+npm run install:all
+
+# Запуск фронтенда и бэкенда одновременно
+./start.sh
+\`\`\`
+
+**Windows:**
+\`\`\`bash
+# Установка зависимостей для всех проектов
+npm run install:all
+
+# Запуск фронтенда и бэкенда одновременно
+start.bat
+\`\`\`
+
+#### Вариант 2: Использование npm скриптов
+\`\`\`bash
+# Установка зависимостей
+npm install
+npm run install:all
+
+# Запуск обоих серверов параллельно
+npm run dev
+\`\`\`
+
+### Backend Setup (ручной запуск)
 \`\`\`bash
 cd server
 npm install
@@ -85,13 +117,17 @@ npm run db:push
 npm run dev
 \`\`\`
 
-### Frontend Setup
+### Frontend Setup (ручной запуск)
 \`\`\`bash
 cd client
 npm install
 cp .env.example .env.local
 npm run dev
 \`\`\`
+
+После запуска:
+- **Frontend**: http://localhost:3000
+- **Backend**: http://localhost:3001
 
 ## API Эндпоинты
 
